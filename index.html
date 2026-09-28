@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <title>HACKERxMAIL</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800&family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root, [data-theme="dark"] {
+      --bg: #03050a;
+      --glass: rgba(12, 18, 32, 0.45);
+      --glass2: rgba(18, 26, 44, 0.55);
+      --glass-border: rgba(255, 255, 255, 0.12);
+      --glass-border-hi: rgba(0, 255, 200, 0.28);
+      --text: #eef6ff;
+      --text2: #a8b8d0;
+      --muted: #6b7a94;
+      --neon: #00ffc8;
+      --neon2: #00b4ff;
+      --neon3: #7cffb2;
+      --danger: #ff5c7a;
+      --danger-soft: rgba(255, 92, 122, 0.14);
+      --success: #00ffc8;
+      --success-soft: rgba(0, 255, 200, 0.12);
+      --shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
+      --radius: 20px;
+      --radius-sm: 14px;
+    }
+
+    [data-theme="light"] {
+      --bg: #e8eef8;
+      --glass: rgba(255, 255, 255, 0.55);
+      --glass2: rgba(255, 255, 255, 0.72);
+      --glass-border: rgba(15, 30, 60, 0.1);
+      --glass-border-hi: rgba(0, 140, 120, 0.3);
+      --text: #0a1220;
+      --text2: #3a4a62;
+      --muted: #6a7a90;
+      --neon: #0891b2;
+      --neon2: #2563eb;
+      --neon3: #059669;
+      --danger: #e11d48;
+      --danger-soft: rgba(225, 29, 72, 0.1);
+      --success: #059669;
+      --success-soft: rgba(5, 150, 105, 0.12);
+      --shadow: 0 16px 40px rgba(15, 30, 60, 0.12);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    html, body {
+      height: 100%;
+      font-family: "Outfit", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    body { min-height: 100dvh; position: relative; transition: color 0.35s; }
+
+    /* ===== LIVE MORPHING BACKGROUND ===== */
+    .bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+      background: var(--bg);
+    }
+
+    .blob {
+      position: absolute;
+      border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+      filter: blur(50px);
+      opacity: 0.55;
+      will-change: transform, border-radius;
+      mix-blend-mode: screen;
+    }
+    [data-theme="light"] .blob { mix-blend-mode: multiply; opacity: 0.35; }
+
+    .blob.b1 {
+      width: 55vmax; height: 55vmax;
+      left: -15%; top: -20%;
+      background: radial-gradient(circle, #00ffc8 0%, transparent 70%);
+      animation: morph1 12s ease-in-out infinite, drift1 18s ease-in-out infinite;
+    }
+    .blob.b2 {
+      width: 50vmax; height: 50vmax;
+      right: -20%; top: 20%;
+      background: radial-gradient(circle, #0088ff 0%, transparent 70%);
+      animation: morph2 14s ease-in-out infinite, drift2 22s ease-in-out infinite;
+    }
+    .blob.b3 {
+      width: 45vmax; height: 45vmax;
+      left: 20%; bottom: -25%;
+      background: radial-gradient(circle, #7b5cff 0%, transparent 70%);
+      animation: morph1 16s ease-in-out infinite reverse, drift3 20s ease-in-out infinite;
+    }
+    .blob.b4 {
+      width: 35vmax; height: 35vmax;
+      left: 40%; top: 40%;
+      background: radial-gradient(circle, #ff3d9a 0%, transparent 70%);
+      opacity: 0.3;
+      animation: morph2 11s ease-in-out infinite, drift1 25s ease-in-out infinite reverse;
+    }
+
+    @keyframes morph1 {
+      0%, 100% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+      25% { border-radius: 70% 30% 50% 50% / 30% 60% 40% 70%; }
+      50% { border-radius: 30% 60% 40% 70% / 60% 30% 70% 40%; }
+      75% { border-radius: 50% 40% 60% 40% / 40% 70% 30% 60%; }
+    }
+    @keyframes morph2 {
+      0%, 100% { border-radius: 60% 40% 30% 70% / 50% 40% 60% 50%; }
+      33% { border-radius: 40% 70% 50% 30% / 70% 50% 30% 50%; }
+      66% { border-radius: 70% 30% 60% 40% / 40% 60% 50% 40%; }
+    }
+    @keyframes drift1 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(8%, 12%) scale(1.1); }
+    }
+    @keyframes drift2 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(-10%, 8%) scale(1.15); }
+    }
+    @keyframes drift3 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(6%, -10%) scale(0.95); }
+    }
+
+    .scanlines {
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.08) 2px,
+        rgba(0, 0, 0, 0.08) 4px
+      );
+      opacity: 0.35;
+      pointer-events: none;
+    }
+    [data-theme="light"] .scanlines { opacity: 0.08; }
+
+    .noise {
+      position: absolute;
+      inset: 0;
+      opacity: 0.04;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 180px;
+      animation: noiseShift 0.4s steps(3) infinite;
+    }
+    @keyframes noiseShift {
+      0% { transform: translate(0, 0); }
+      25% { transform: translate(-1%, 1%); }
+      50% { transform: translate(1%, -1%); }
+      75% { transform: translate(-1%, -1%); }
+      100% { transform: translate(0, 0); }
+    }
+
+    /* ===== APP ===== */
+    .app {
+      position: relative;
+      z-index: 1;
+      max-width: 430px;
+      margin: 0 auto;
+      padding: 14px 16px 36px;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      animation: enter 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    @keyframes enter {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: none; }
+    }
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(18px) scale(0.98); }
+      to { opacity: 1; transform: none; }
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--neon) 45%, transparent); }
+      70% { box-shadow: 0 0 0 12px transparent; }
+      100% { box-shadow: 0 0 0 0 transparent; }
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes floatY {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+    @keyframes otpIn {
+      0% { transform: scale(0.85); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 2px 0 6px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; }
+
+    .logo {
+      width: 54px; height: 54px;
+      border-radius: 16px;
+      overflow: hidden;
+      flex-shrink: 0;
+      border: 1px solid var(--glass-border-hi);
+      box-shadow: 0 0 24px color-mix(in srgb, var(--neon) 25%, transparent);
+      animation: floatY 4s ease-in-out infinite;
+      background: rgba(0,0,0,0.3);
+    }
+    .logo img { width: 100%; height: 100%; object-fit: cover; }
+
+    .brand-text h1 {
+      font-family: "Orbitron", sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: var(--text);
+      line-height: 1.2;
+    }
+    .brand-text h1 span {
+      color: var(--neon);
+      text-shadow: 0 0 18px color-mix(in srgb, var(--neon) 50%, transparent);
+    }
+    .brand-text p {
+      font-size: 10px;
+      color: var(--muted);
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-top: 3px;
+    }
+
+    .header-actions { display: flex; gap: 8px; align-items: center; }
+
+    .icon-round {
+      width: 40px; height: 40px; border-radius: 12px;
+      border: 1px solid var(--glass-border);
+      background: var(--glass);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      color: var(--text2);
+      display: grid; place-items: center;
+      cursor: pointer; font-size: 16px;
+      transition: transform 0.15s, border-color 0.2s, box-shadow 0.2s;
+    }
+    .icon-round:active { transform: scale(0.92); }
+    .icon-round:hover {
+      border-color: var(--glass-border-hi);
+      box-shadow: 0 0 16px color-mix(in srgb, var(--neon) 20%, transparent);
+    }
+
+    .live-pill {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 7px 11px; border-radius: 999px;
+      background: var(--success-soft);
+      color: var(--neon);
+      border: 1px solid color-mix(in srgb, var(--neon) 30%, transparent);
+      backdrop-filter: blur(12px);
+    }
+    .live-pill .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--neon);
+      animation: pulse 2s infinite;
+    }
+    .live-pill.warn {
+      background: var(--danger-soft);
+      color: var(--danger);
+      border-color: color-mix(in srgb, var(--danger) 30%, transparent);
+    }
+    .live-pill.warn .dot { background: var(--danger); animation: none; }
+
+    /* Glass cards */
+    .card {
+      background: var(--glass);
+      backdrop-filter: blur(24px) saturate(1.4);
+      -webkit-backdrop-filter: blur(24px) saturate(1.4);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+      animation: rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+      position: relative;
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.18), transparent 40%, transparent 60%, color-mix(in srgb, var(--neon) 25%, transparent));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+    .card.d1 { animation-delay: 0.05s; }
+    .card.d2 { animation-delay: 0.12s; }
+
+    .label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .label .pd {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--neon);
+      box-shadow: 0 0 10px var(--neon);
+      animation: pulse 2s infinite;
+    }
+
+    .email-row { display: flex; gap: 10px; }
+
+    .email-box {
+      flex: 1;
+      background: var(--glass2);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      word-break: break-all;
+      line-height: 1.4;
+      backdrop-filter: blur(12px);
+    }
+
+    .copy-btn {
+      width: 50px;
+      border: 1px solid var(--glass-border-hi);
+      border-radius: var(--radius-sm);
+      background: color-mix(in srgb, var(--neon) 12%, transparent);
+      color: var(--neon);
+      font-size: 18px;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: transform 0.15s, box-shadow 0.2s;
+      flex-shrink: 0;
+    }
+    .copy-btn:active { transform: scale(0.93); }
+    .copy-btn:hover { box-shadow: 0 0 20px color-mix(in srgb, var(--neon) 30%, transparent); }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr 50px;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 13px 14px;
+      font-family: inherit;
+      font-size: 13.5px;
+      font-weight: 650;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      transition: transform 0.15s, box-shadow 0.2s, opacity 0.2s;
+    }
+    .btn:active { transform: scale(0.96); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .btn-primary {
+      background: color-mix(in srgb, var(--neon) 18%, transparent);
+      color: var(--neon);
+      border: 1px solid var(--glass-border-hi);
+      box-shadow: 0 0 28px color-mix(in srgb, var(--neon) 20%, transparent);
+      backdrop-filter: blur(8px);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+    .btn-primary:hover {
+      box-shadow: 0 0 36px color-mix(in srgb, var(--neon) 35%, transparent);
+      background: color-mix(in srgb, var(--neon) 25%, transparent);
+    }
+
+    .btn-soft {
+      background: var(--glass2);
+      color: var(--text);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(10px);
+    }
+
+    .btn-danger {
+      background: var(--danger-soft);
+      color: var(--danger);
+      border: 1px solid color-mix(in srgb, var(--danger) 28%, transparent);
+      width: 50px;
+      padding: 0;
+      font-size: 16px;
+    }
+
+    .btn-block { width: 100%; padding: 15px; font-size: 15px; }
+
+    /* Hero */
+    .hero { text-align: center; padding: 18px 6px 8px; }
+    .hero-icon {
+      width: 100px; height: 100px;
+      margin: 0 auto 16px;
+      border-radius: 28px;
+      overflow: hidden;
+      border: 1px solid var(--glass-border-hi);
+      box-shadow: 0 0 40px color-mix(in srgb, var(--neon) 30%, transparent);
+      animation: floatY 3.8s ease-in-out infinite;
+      background: rgba(0,0,0,0.25);
+    }
+    .hero-icon img { width: 100%; height: 100%; object-fit: cover; }
+    .hero h2 {
+      font-family: "Orbitron", sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
+    }
+    .hero h2 span { color: var(--neon); }
+    .hero p {
+      font-size: 13.5px;
+      color: var(--muted);
+      line-height: 1.55;
+      max-width: 280px;
+      margin: 0 auto;
+    }
+
+    .domain-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .chip {
+      border: 1px solid var(--glass-border);
+      background: var(--glass2);
+      color: var(--text2);
+      border-radius: 12px;
+      padding: 11px 8px;
+      font-size: 11.5px;
+      font-family: "JetBrains Mono", monospace;
+      font-weight: 500;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+      backdrop-filter: blur(8px);
+    }
+    .chip:hover, .chip.on {
+      border-color: var(--glass-border-hi);
+      color: var(--neon);
+      box-shadow: 0 0 18px color-mix(in srgb, var(--neon) 18%, transparent);
+      transform: translateY(-2px);
+    }
+
+    .msg-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 48vh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .msg {
+      background: var(--glass2);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 14px 15px;
+      cursor: pointer;
+      transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+      animation: rise 0.35s ease both;
+      backdrop-filter: blur(10px);
+    }
+    .msg:active { transform: scale(0.985); }
+    .msg:hover {
+      border-color: var(--glass-border-hi);
+      box-shadow: 0 0 20px color-mix(in srgb, var(--neon) 12%, transparent);
+    }
+    .msg.otp {
+      border-color: color-mix(in srgb, var(--neon) 45%, transparent);
+      box-shadow: 0 0 28px color-mix(in srgb, var(--neon) 15%, transparent);
+    }
+    .msg-from {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .msg-sub {
+      font-size: 14px;
+      font-weight: 650;
+      color: var(--text);
+      margin-bottom: 8px;
+      line-height: 1.35;
+    }
+    .otp-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--success-soft);
+      color: var(--neon);
+      font-family: "JetBrains Mono", monospace;
+      font-weight: 700;
+      font-size: 17px;
+      letter-spacing: 0.14em;
+      padding: 9px 14px;
+      border-radius: 12px;
+      border: 1px solid color-mix(in srgb, var(--neon) 35%, transparent);
+      animation: otpIn 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      cursor: pointer;
+      box-shadow: 0 0 22px color-mix(in srgb, var(--neon) 22%, transparent);
+    }
+
+    .empty {
+      text-align: center;
+      padding: 30px 12px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .empty .ico {
+      font-size: 38px;
+      margin-bottom: 10px;
+      display: inline-block;
+      animation: floatY 3s ease-in-out infinite;
+    }
+
+    .loader {
+      width: 18px; height: 18px;
+      border: 2.5px solid color-mix(in srgb, var(--neon) 25%, transparent);
+      border-top-color: var(--neon);
+      border-radius: 50%;
+      animation: spin 0.65s linear infinite;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 28px;
+      transform: translateX(-50%) translateY(24px);
+      background: var(--glass2);
+      border: 1px solid var(--glass-border-hi);
+      color: var(--text);
+      padding: 12px 18px;
+      border-radius: 14px;
+      font-size: 13px;
+      font-weight: 650;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+      z-index: 200;
+      backdrop-filter: blur(20px);
+      box-shadow: var(--shadow);
+      max-width: 90%;
+      text-align: center;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .footer {
+      text-align: center;
+      padding: 10px 6px 4px;
+    }
+    .footer-line {
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .footer-owner {
+      margin-top: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text2);
+      letter-spacing: 0.04em;
+    }
+    .footer-owner span {
+      font-family: "Orbitron", sans-serif;
+      color: var(--neon);
+      text-shadow: 0 0 14px color-mix(in srgb, var(--neon) 40%, transparent);
+      font-weight: 700;
+    }
+
+    .hidden { display: none !important; }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(10px);
+      z-index: 100;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+    }
+    .overlay.show { opacity: 1; pointer-events: auto; }
+
+    .sheet {
+      width: 100%;
+      max-width: 430px;
+      max-height: 78vh;
+      background: var(--glass2);
+      backdrop-filter: blur(28px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px 24px 0 0;
+      padding: 12px 18px 32px;
+      transform: translateY(100%);
+      transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+      overflow-y: auto;
+    }
+    .overlay.show .sheet { transform: translateY(0); }
+    .handle {
+      width: 40px; height: 4px;
+      background: var(--glass-border);
+      border-radius: 4px;
+      margin: 0 auto 14px;
+    }
+    .sheet-body {
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: var(--text2);
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin-top: 8px;
+    }
+    .skel {
+      height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(90deg, var(--glass2) 25%, color-mix(in srgb, var(--text) 6%, var(--glass2)) 50%, var(--glass2) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.2s infinite;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg" aria-hidden="true">
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="blob b3"></div>
+    <div class="blob b4"></div>
+    <div class="noise"></div>
+    <div class="scanlines"></div>
+  </div>
+
+  <div class="app">
+    <header class="header">
+      <div class="brand">
+        <div class="logo"><img src="/logo.jpg" alt="HACKERxMAIL" /></div>
+        <div class="brand-text">
+          <h1>HACKER<span>x</span>MAIL</h1>
+          <p>Secure temp inbox</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="icon-round" id="themeBtn" onclick="toggleTheme()" title="Theme">☀</button>
+        <div class="live-pill" id="statusPill">
+          <span class="dot"></span>
+          <span id="statusText">Ready</span>
+        </div>
+      </div>
+    </header>
+
+    <div id="welcomeView">
+      <div class="card d1">
+        <div class="hero">
+          <div class="hero-icon"><img src="/logo.jpg" alt="HACKERxMAIL" /></div>
+          <h2>HACKER<span>x</span>MAIL</h2>
+          <p>Disposable inbox. Instant OTP. Glass-secure & private.</p>
+        </div>
+        <button class="btn btn-primary btn-block" id="btnCreate" onclick="createMail()">
+          <span>⚡</span> Generate email
+        </button>
+      </div>
+      <div class="card d2">
+        <div class="label">Select domain</div>
+        <div class="domain-grid" id="domainGrid">
+          <div class="skel"></div><div class="skel"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="inboxView" class="hidden">
+      <div class="card d1">
+        <div class="label"><span class="pd"></span> Active email</div>
+        <div class="email-row">
+          <div class="email-box" id="emailAddr">—</div>
+          <button class="copy-btn" onclick="copyEmail()" title="Copy">📋</button>
+        </div>
+        <div class="actions">
+          <button class="btn btn-soft" onclick="createMail()">⚡ New</button>
+          <button class="btn btn-soft" onclick="refreshInbox(true)">↻ Refresh</button>
+          <button class="btn btn-danger" onclick="deleteMail()" title="Delete">🗑</button>
+        </div>
+      </div>
+      <div class="card d2">
+        <div class="label"><span class="pd"></span> Inbox · live</div>
+        <div id="msgList" class="msg-list">
+          <div class="empty"><div class="ico">📭</div>Waiting for mail…</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="footer-line">OTP auto-detect · private disposable mail</div>
+      <div class="footer-owner">Owned by <span>Junaid</span></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <div class="overlay" id="overlay" onclick="closeSheet(event)">
+    <div class="sheet" onclick="event.stopPropagation()">
+      <div class="handle"></div>
+      <div class="label" id="sheetTitle">Message</div>
+      <div class="sheet-body" id="sheetBody"></div>
+      <button class="btn btn-primary btn-block hidden" style="margin-top:16px" id="sheetCopyBtn" onclick="copySheetOtp()">Copy OTP</button>
+    </div>
+  </div>
+
+  <script>
+    const API = location.origin + "/api";
+    const tg = window.Telegram?.WebApp || null;
+
+    let box = null;
+    let selectedDomain = null;
+    let pollTimer = null;
+    let sheetOtp = null;
+    let refreshing = false;
+    let lastMsgHtml = "";
+
+    function applyTheme(t) {
+      document.documentElement.setAttribute("data-theme", t);
+      localStorage.setItem("hm_theme", t);
+      document.getElementById("themeBtn").textContent = t === "dark" ? "☀" : "☾";
+    }
+    function toggleTheme() {
+      const cur = document.documentElement.getAttribute("data-theme") || "dark";
+      applyTheme(cur === "dark" ? "light" : "dark");
+    }
+    (function initTheme() {
+      const saved = localStorage.getItem("hm_theme");
+      if (saved) applyTheme(saved);
+      else if (tg?.colorScheme) applyTheme(tg.colorScheme === "light" ? "light" : "dark");
+      else applyTheme("dark");
+    })();
+
+    if (tg) {
+      tg.ready();
+      tg.expand();
+      try { tg.MainButton.hide(); } catch (e) {}
+    }
+
+    function toast(msg) {
+      const el = document.getElementById("toast");
+      el.textContent = msg;
+      el.classList.add("show");
+      clearTimeout(el._t);
+      el._t = setTimeout(() => el.classList.remove("show"), 2200);
+      try { tg?.HapticFeedback?.notificationOccurred("success"); } catch (e) {}
+    }
+
+    function setStatus(text, ok = true) {
+      document.getElementById("statusText").textContent = text;
+      document.getElementById("statusPill").classList.toggle("warn", !ok);
+    }
+
+    function randName() {
+      const n = "alex aria bella cody dora echo finn gia hugo iris jazz kiro luna maya nova orin pixi quin ruby sage tara umi vera wren leo mia noah kai zoey".split(" ");
+      return n[Math.floor(Math.random() * n.length)] + (100 + Math.floor(Math.random() * 9900));
+    }
+    function randPass(n = 14) {
+      const c = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      let s = "";
+      for (let i = 0; i < n; i++) s += c[Math.floor(Math.random() * c.length)];
+      return s;
+    }
+
+    async function api(path, opts = {}) {
+      const res = await fetch(API + path, {
+        ...opts,
+        headers: { "Content-Type": "application/json", ...(opts.headers || {}) },
+      });
+      if (!res.ok) {
+        let err = "HTTP " + res.status;
+        try { const j = await res.json(); err = j.message || err; } catch (e) {}
+        throw new Error(err);
+      }
+      const ct = res.headers.get("content-type") || "";
+      return ct.includes("json") ? res.json() : res.text();
+    }
+
+    function parseList(data) {
+      if (Array.isArray(data)) return data;
+      if (data && typeof data === "object") return data["hydra:member"] || data.member || [];
+      return [];
+    }
+
+    async function loadDomains() {
+      try {
+        const data = await api("/domains");
+        const domains = parseList(data).filter(d => d.isActive !== false).map(d => d.domain);
+        const grid = document.getElementById("domainGrid");
+        if (!domains.length) {
+          grid.innerHTML = '<div style="grid-column:1/-1;color:var(--muted);font-size:13px;text-align:center">No domains</div>';
+          return;
+        }
+        grid.innerHTML = domains.map(d =>
+          '<button type="button" class="chip" data-d="' + d + '" onclick="pickDomain(\'' + d + '\')">@' + d + '</button>'
+        ).join("");
+      } catch (e) {
+        document.getElementById("domainGrid").innerHTML =
+          '<div style="grid-column:1/-1;color:var(--muted);font-size:12px;text-align:center">Domains offline</div>';
+      }
+    }
+
+    function pickDomain(d) {
+      selectedDomain = d;
+      document.querySelectorAll(".chip").forEach(el => el.classList.toggle("on", el.dataset.d === d));
+      toast("@" + d);
+    }
+
+    async function createMail() {
+      const btn = document.getElementById("btnCreate");
+      if (btn) { btn.disabled = true; btn.innerHTML = '<span class="loader"></span> Creating…'; }
+      setStatus("Creating…");
+      try {
+        let domains = [];
+        try {
+          domains = parseList(await api("/domains")).filter(d => d.isActive !== false).map(d => d.domain);
+        } catch (e) {}
+        const domain = (selectedDomain && domains.includes(selectedDomain)) ? selectedDomain : (domains[0] || "uberip.com");
+        let lastErr = "failed";
+        for (let i = 0; i < 5; i++) {
+          const address = randName() + "@" + domain;
+          const password = randPass();
+          try {
+            const acc = await api("/accounts", { method: "POST", body: JSON.stringify({ address, password }) });
+            const tok = await api("/token", { method: "POST", body: JSON.stringify({ address, password }) });
+            box = { id: acc.id, address, password, token: tok.token, seen: new Set(), cache: {} };
+            saveBox();
+            showInbox();
+            toast("Inbox ready");
+            setStatus("Live");
+            startPoll();
+            try { tg?.sendData?.(JSON.stringify({ action: "created", address })); } catch (e) {}
+            return;
+          } catch (e) {
+            lastErr = e.message || String(e);
+            if (String(lastErr).includes("422")) continue;
+            await new Promise(r => setTimeout(r, 350));
+          }
+        }
+        throw new Error(lastErr);
+      } catch (e) {
+        toast("Create failed: " + (e.message || e));
+        setStatus("Error", false);
+      } finally {
+        if (btn) { btn.disabled = false; btn.innerHTML = "<span>⚡</span> Generate email"; }
+      }
+    }
+
+    function saveBox() {
+      if (!box) return;
+      localStorage.setItem("hm_box", JSON.stringify({
+        id: box.id, address: box.address, password: box.password, token: box.token,
+        seen: [...(box.seen || [])],
+      }));
+    }
+
+    function showInbox() {
+      document.getElementById("welcomeView").classList.add("hidden");
+      document.getElementById("inboxView").classList.remove("hidden");
+      document.getElementById("emailAddr").textContent = box.address;
+      lastMsgHtml = "";
+      refreshInbox(false);
+    }
+
+    function showWelcome() {
+      document.getElementById("inboxView").classList.add("hidden");
+      document.getElementById("welcomeView").classList.remove("hidden");
+      stopPoll();
+    }
+
+    function copyEmail() {
+      if (!box) return;
+      navigator.clipboard.writeText(box.address).then(() => toast("Email copied")).catch(() => toast(box.address));
+      try { tg?.HapticFeedback?.impactOccurred("light"); } catch (e) {}
+    }
+
+    function extractOtp(subject, body) {
+      const blob = (subject || "") + "\n" + (body || "");
+      const hinted = blob.match(/(?:verification\s+code|otp|code|pin|passcode|token)(?:\s+(?:is|number))?\s*[:#-]?\s*([A-Z0-9]{4,8})\b/i);
+      if (hinted) return hinted[1];
+      const noise = new Set(["2024","2025","2026","0000","1111","1234","9999"]);
+      const m = blob.match(/\b(\d{4,8})\b/);
+      if (m && !noise.has(m[1])) return m[1];
+      return null;
+    }
+
+    function esc(s) {
+      return String(s || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+    }
+
+    async function refreshInbox(manual) {
+      if (!box || refreshing) return;
+      refreshing = true;
+      if (manual) setStatus("Refreshing…");
+      try {
+        let data;
+        try {
+          data = await api("/messages?page=1", { headers: { Authorization: "Bearer " + box.token } });
+        } catch (e) {
+          if (String(e.message).includes("401")) {
+            const tok = await api("/token", { method: "POST", body: JSON.stringify({ address: box.address, password: box.password }) });
+            box.token = tok.token;
+            saveBox();
+            data = await api("/messages?page=1", { headers: { Authorization: "Bearer " + box.token } });
+          } else throw e;
+        }
+
+        let msgs = parseList(data).slice(0, 12);
+        const list = document.getElementById("msgList");
+
+        if (!msgs.length) {
+          const emptyHtml = '<div class="empty"><div class="ico">📭</div>Inbox empty — waiting for mail…</div>';
+          if (lastMsgHtml !== emptyHtml) {
+            list.innerHTML = emptyHtml;
+            lastMsgHtml = emptyHtml;
+          }
+          setStatus("Live");
+          return;
+        }
+
+        if (!box.cache) box.cache = {};
+        const parts = [];
+
+        for (const m of msgs) {
+          const from = (m.from && m.from.address) || "unknown";
+          const subject = m.subject || "(no subject)";
+          if (!box.cache[m.id]) {
+            try {
+              const full = await api("/messages/" + m.id, { headers: { Authorization: "Bearer " + box.token } });
+              const text = full.text || (Array.isArray(full.html) ? full.html[0] : full.html || "");
+              const bodyPreview = String(text).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 500);
+              const otp = extractOtp(subject, bodyPreview);
+              box.cache[m.id] = { otp, body: bodyPreview };
+            } catch (e) {
+              box.cache[m.id] = { otp: null, body: "" };
+            }
+          }
+          const otp = box.cache[m.id].otp;
+          const isNewOtp = otp && box.seen && !box.seen.has(m.id);
+          parts.push(
+            '<div class="msg' + (otp ? ' otp' : '') + '" data-id="' + m.id + '">' +
+            '<div class="msg-from">' + esc(from) + '</div>' +
+            '<div class="msg-sub">' + esc(subject) + '</div>' +
+            (otp ? '<div class="otp-pill" data-otp="' + esc(otp) + '">⚡ ' + esc(otp) + '</div>' : '') +
+            '</div>'
+          );
+          if (isNewOtp) {
+            box.seen.add(m.id);
+            toast("OTP · " + otp);
+            try { tg?.HapticFeedback?.notificationOccurred("success"); } catch (e) {}
+          }
+        }
+
+        const html = parts.join("");
+        if (html !== lastMsgHtml) {
+          list.innerHTML = html;
+          lastMsgHtml = html;
+          list.querySelectorAll(".msg").forEach(el => {
+            el.onclick = () => {
+              const id = el.dataset.id;
+              const c = box.cache[id] || {};
+              const sub = el.querySelector(".msg-sub")?.textContent || "Message";
+              openSheet(sub, c.body || "", c.otp || null);
+            };
+          });
+          list.querySelectorAll(".otp-pill").forEach(el => {
+            el.onclick = (e) => {
+              e.stopPropagation();
+              copyText(el.dataset.otp);
+            };
+          });
+        }
+        saveBox();
+        setStatus("Live");
+      } catch (e) {
+        if (manual) toast("Refresh failed");
+        setStatus("Offline", false);
+      } finally {
+        refreshing = false;
+      }
+    }
+
+    function copyText(t) {
+      navigator.clipboard.writeText(t).then(() => toast("Copied · " + t)).catch(() => toast(t));
+      try { tg?.HapticFeedback?.impactOccurred("medium"); } catch (e) {}
+    }
+
+    function openSheet(title, body, otp) {
+      sheetOtp = otp;
+      document.getElementById("sheetTitle").textContent = title || "Message";
+      document.getElementById("sheetBody").textContent = body || "(empty)";
+      const btn = document.getElementById("sheetCopyBtn");
+      if (otp) {
+        btn.classList.remove("hidden");
+        btn.textContent = "Copy OTP · " + otp;
+      } else btn.classList.add("hidden");
+      document.getElementById("overlay").classList.add("show");
+    }
+
+    function closeSheet(e) {
+      if (e && e.target !== document.getElementById("overlay")) return;
+      document.getElementById("overlay").classList.remove("show");
+    }
+
+    function copySheetOtp() {
+      if (sheetOtp) copyText(sheetOtp);
+    }
+
+    async function deleteMail() {
+      if (!box) return;
+      try {
+        await api("/accounts/" + box.id, {
+          method: "DELETE",
+          headers: { Authorization: "Bearer " + box.token },
+        });
+      } catch (e) {}
+      box = null;
+      lastMsgHtml = "";
+      localStorage.removeItem("hm_box");
+      showWelcome();
+      setStatus("Ready");
+      toast("Inbox deleted");
+    }
+
+    function startPoll() {
+      stopPoll();
+      pollTimer = setInterval(() => refreshInbox(false), 1000);
+    }
+    function stopPoll() {
+      if (pollTimer) clearInterval(pollTimer);
+      pollTimer = null;
+    }
+
+    loadDomains();
+    try {
+      const raw = localStorage.getItem("hm_box");
+      if (raw) {
+        const b = JSON.parse(raw);
+        b.seen = new Set(b.seen || []);
+        b.cache = {};
+        box = b;
+        showInbox();
+        startPoll();
+        setStatus("Live");
+      }
+    } catch (e) {}
+  </script>
+</body>
+</html>
